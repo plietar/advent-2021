@@ -1,4 +1,5 @@
 with import <nixpkgs> {};
-mkShell {
-  buildInputs = [ rustc libiconv ];
+let subdirs = [ ./day01 ./day02 ];
+in mkShell {
+  buildInputs = lib.concatMap (d: import d pkgs) subdirs;
 }

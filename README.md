@@ -53,3 +53,14 @@ be produced.
 
 As an extended goal, the solution should include a proof of correctness.
 
+## Structure
+
+Every day of the advent calendar is located in a separate directory. Each
+directory contains a `Makefile` with build instructions suitable to the
+specific language. The `Makefile` should expose two targets, `build/part1` and
+`build/part2`, each one of them an executable file that solves the respective
+parts of the problem. Each executable reads the input data on stdin and
+produces the output on stdout.
+
+Additionally, each subdirectory contains a `default.nix`, describing the
+dependencies necessary to build or execute the solution.
