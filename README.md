@@ -1,11 +1,13 @@
 # The Advent of Code, but it's a different language every day
 
-## List of languages
+## Solutions
+- [Day 1: Sonar Sweep (Python)](day01)
+- [Day 2: Dive! (Rust)](day02)
 
-This is a tentative list of languages, subject to change:
+## Languages
 
-- Python
-- Rust
+This is a tentative list of languages that haven't been used yet, subject to change:
+
 - JS
 - Java
 - C++
