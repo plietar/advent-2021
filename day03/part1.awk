@@ -1,3 +1,5 @@
+#!/usr/bin/env gawk -f
+
 {
   split($0, bits, "")
   for (i = 1; i <= length($0); i++) {

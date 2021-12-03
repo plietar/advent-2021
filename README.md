@@ -3,6 +3,7 @@
 ## Solutions
 - [Day 1: Sonar Sweep (Python)](day01)
 - [Day 2: Dive! (Rust)](day02)
+- [Day 3: Binary Diagnostic (Awk)](day03)
 
 ## Languages
 

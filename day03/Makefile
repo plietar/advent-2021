@@ -2,4 +2,4 @@ include ../common.mk
 
 $(BINS): build/%:
 	mkdir -p build
-	ln -sf ../main.py $@
+	ln -sf ../$*.awk $@
