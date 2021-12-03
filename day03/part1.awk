@@ -1,4 +1,4 @@
-#!/usr/bin/env gawk -f
+#!/usr/bin/env -S gawk -f
 
 {
   split($0, bits, "")
