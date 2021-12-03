@@ -1,6 +1,6 @@
 # The Advent of Code, but it's a different language every day
 
-## Solutions
+## Solutions
 - [Day 1: Sonar Sweep (Python)](day01)
 - [Day 2: Dive! (Rust)](day02)
 
@@ -32,6 +32,18 @@ This is a tentative list of languages that haven't been used yet, subject to cha
 - Assembly
 - Prolog
 
+## Structure
+
+Every day of the advent calendar is located in a separate directory. Each
+directory contains a `Makefile` with build instructions suitable to the
+specific language. The `Makefile` should expose two targets, `build/part1` and
+`build/part2`, each one of them an executable file that solves the respective
+parts of the problem. Each executable reads the input data on stdin and
+produces the output on stdout.
+
+Additionally, each subdirectory contains a `default.nix`, describing the
+dependencies necessary to build or execute the solution.
+
 ## Rules
 
 Solutions may only use the standard library that comes with the default
@@ -55,14 +67,3 @@ be produced.
 
 As an extended goal, the solution should include a proof of correctness.
 
-## Structure
-
-Every day of the advent calendar is located in a separate directory. Each
-directory contains a `Makefile` with build instructions suitable to the
-specific language. The `Makefile` should expose two targets, `build/part1` and
-`build/part2`, each one of them an executable file that solves the respective
-parts of the problem. Each executable reads the input data on stdin and
-produces the output on stdout.
-
-Additionally, each subdirectory contains a `default.nix`, describing the
-dependencies necessary to build or execute the solution.
