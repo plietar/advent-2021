@@ -12,11 +12,11 @@ load_input:
   mov $0, %rdi
   mov %rax, %rsi
   mov $BUFFER_SIZE, %rdx
-  call _read
+  call read
 
   pop %rbp
   cmpq $BUFFER_SIZE, %rax
-  je _abort
+  je abort
 
   add cursor(%rip), %rax
   mov %rax, buffer_end(%rip)

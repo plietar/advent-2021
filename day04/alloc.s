@@ -42,7 +42,7 @@ alloc_big:
   mov $(MAP_PRIVATE+MAP_ANONYMOUS), %rcx
   mov $0, %r8
   mov $0, %r9
-  call _mmap
+  call mmap
   pop %rbp
   ret
 
@@ -52,7 +52,7 @@ alloc_debug:
   leaq fmt_alloc_debug(%rip), %rdi
   mov alloc_start(%rip), %rsi
   mov alloc_end(%rip), %rdx
-  call _printf
+  call printf
   pop %rbp
   ret
 

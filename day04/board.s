@@ -57,7 +57,7 @@ board_debug_again:
   mov 16(%r12), %rcx
   mov 24(%r12), %r8
   mov 32(%r12), %r9
-  call _printf
+  call printf
   add $40, %r12
   jmp board_debug_again
 
@@ -113,7 +113,7 @@ board_list_debug_again:
   mov %r12, %rdi
   call board_debug
   leaq fmt_nl(%rip), %rdi
-  call _printf
+  call printf
 
   mov board_link(%r12), %r12
   jmp board_list_debug_again

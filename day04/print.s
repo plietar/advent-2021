@@ -29,7 +29,7 @@ put_long_done:
   mov %r8, %rsi
   lea (print_buffer+128)(%rip), %rdx
   sub %rsi, %rdx
-  call _write
+  call write
   pop %rbp
   ret
 

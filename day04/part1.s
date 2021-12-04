@@ -2,8 +2,8 @@
 # return: rax
 # callee save: rbp, rbx, r12, r13, r14, r15
 
-.global _main
-_main:
+.global main
+main:
   push %rbp
 
   call load_input
@@ -38,11 +38,11 @@ found:
   call put_long
 
   mov $0, %rdi
-  call _exit
+  call exit
  
 stop:
   mov $1, %rdi
-  call _exit
+  call exit
 
 .data
 boards: .quad 0
