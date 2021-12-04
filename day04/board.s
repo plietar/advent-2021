@@ -275,7 +275,7 @@ board_check_column_no:
   mov $0, %rax
   ret
 
-# void board_list_take_winners(board **)
+# board* board_list_take_winners(board **)
 board_list_take_winners:
   push %r12
   push %r13
