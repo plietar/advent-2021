@@ -5,6 +5,7 @@
 - [Day 2: Dive! (Rust)](day02)
 - [Day 3: Binary Diagnostic (Awk)](day03)
 - [Day 4: Giant Squid (x64 Assembly)](day04)
+- [Day 5: Hydrothermal Venture (Perl)](day05)
 
 ## Languages
 
@@ -30,8 +31,6 @@ This is a tentative list of languages that haven't been used yet, subject to cha
 - PHP
 - F#
 - Nix
-- Perl
-- Assembly
 - Prolog
 
 ## Structure
