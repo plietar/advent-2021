@@ -6,6 +6,7 @@
 - [Day 3: Binary Diagnostic (Awk)](day03)
 - [Day 4: Giant Squid (x64 Assembly)](day04)
 - [Day 5: Hydrothermal Venture (Perl)](day05)
+- [Day 6: Lanternfish (Nix)](day06)
 
 ## Languages
 
@@ -30,7 +31,6 @@ This is a tentative list of languages that haven't been used yet, subject to cha
 - Kotlin
 - PHP
 - F#
-- Nix
 - Prolog
 
 ## Structure
