@@ -7,6 +7,7 @@
 - [Day 4: Giant Squid (x64 Assembly)](day04)
 - [Day 5: Hydrothermal Venture (Perl)](day05)
 - [Day 6: Lanternfish (Nix)](day06)
+- [Day 7: The Treachery of Whales (Lua)](day07)
 
 ## Languages
 
@@ -24,7 +25,6 @@ This is a tentative list of languages that haven't been used yet, subject to cha
 - Bash
 - Go
 - C#
-- Lua
 - Swift
 - ObjC
 - Scala
