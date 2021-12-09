@@ -8,13 +8,14 @@ main:
 
   call load_input
   call parse_draw
+  mov %rax, %r12
+  mov %rdx, %r13
+
   call board_list_parse
   mov %rax, boards(%rip)
-
-  lea draw_start(%rip), %r12
  
 again:
-  cmp draw_end(%rip), %r12
+  cmp %r12, %r13
   je stop
 
   mov boards(%rip), %rdi
@@ -37,12 +38,14 @@ found:
   mov %rax, %rdi
   call put_long
 
-  mov $0, %rdi
-  call exit
+  mov $0, %rax
+  pop %rbp
+  ret
  
 stop:
-  mov $1, %rdi
-  call exit
+  mov $1, %rax
+  pop %rbp
+  ret
 
 .data
 boards: .quad 0

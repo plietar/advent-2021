@@ -8,13 +8,14 @@ main:
 
   call load_input
   call parse_draw
+  mov %rax, %r12
+  mov %rdx, %r13
+
   call board_list_parse
   mov %rax, boards(%rip)
-
-  lea draw_start(%rip), %r12
  
 again:
-  cmp draw_end(%rip), %r12
+  cmp %r13, %r12
   je stop
   cmpq $0, boards(%rip)
   je stop
@@ -51,5 +52,4 @@ stop:
 .data
 boards: .quad 0
 chosen_board: .quad 0
-chosen_board_temp: .quad 0
 chosen_draw: .quad 0
