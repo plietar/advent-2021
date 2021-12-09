@@ -8,12 +8,13 @@
 - [Day 5: Hydrothermal Venture (Perl)](day05)
 - [Day 6: Lanternfish (Nix)](day06)
 - [Day 7: The Treachery of Whales (Lua)](day07)
+- [Day 8: Seven Segment Search (JavaScript)](day08)
+- [Day 9: Smoke Basin (PHP)](day09)
 
 ## Languages
 
 This is a tentative list of languages that haven't been used yet, subject to change:
 
-- JS
 - Java
 - C++
 - Haskell
@@ -29,7 +30,6 @@ This is a tentative list of languages that haven't been used yet, subject to cha
 - ObjC
 - Scala
 - Kotlin
-- PHP
 - F#
 - Prolog
 
