@@ -10,6 +10,7 @@
 - [Day 7: The Treachery of Whales (Lua)](day07)
 - [Day 8: Seven Segment Search (JavaScript)](day08)
 - [Day 9: Smoke Basin (PHP)](day09)
+- [Day 10: Syntax Scoring (F#)](day10)
 
 ## Languages
 
@@ -30,7 +31,6 @@ This is a tentative list of languages that haven't been used yet, subject to cha
 - ObjC
 - Scala
 - Kotlin
-- F#
 - Prolog
 
 ## Structure
