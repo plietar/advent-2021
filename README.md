@@ -11,6 +11,8 @@
 - [Day 8: Seven Segment Search (JavaScript)](day08)
 - [Day 9: Smoke Basin (PHP)](day09)
 - [Day 10: Syntax Scoring (F#)](day10)
+- [Day 13: Transparent Origami (Go)](day13)
+- [Day 14: Extended Polymerization (Pony)](day14)
 
 ## Languages
 
@@ -19,13 +21,11 @@ This is a tentative list of languages that haven't been used yet, subject to cha
 - Java
 - C++
 - Haskell
-- Pony
 - Coq
 - OCaml
 - Idris
 - Ruby
 - Bash
-- Go
 - C#
 - Swift
 - ObjC
