@@ -81,5 +81,4 @@ public class BitStream
 
 	private byte[] data;
 	private int offset = 0;
-	private int bits = 8;
 }

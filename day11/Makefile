@@ -1,7 +1,6 @@
 include ../common.mk
 
-build/Main.vo build/solver.ml build/solver.mli: Main.v
-	mkdir -p build
+build/solver.ml build/solver.mli: Main.v | build
 	coqc -o build/Main.vo $^
 
 build/solver.cmi: build/solver.mli

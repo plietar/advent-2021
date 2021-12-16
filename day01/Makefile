@@ -1,5 +1,4 @@
 include ../common.mk
 
-$(BINS): build/%:
-	mkdir -p build
+$(BINS): build/%: | build
 	ln -sf ../main.py $@

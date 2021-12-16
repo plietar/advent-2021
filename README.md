@@ -14,12 +14,12 @@
 - [Day 11: Dumbo Octopus (Coq)](day11)
 - [Day 13: Transparent Origami (Go)](day13)
 - [Day 14: Extended Polymerization (Pony)](day14)
+- [Day 16: Packet Decoder (Java)](day16)
 
 ## Languages
 
 This is a tentative list of languages that haven't been used yet, subject to change:
 
-- Java
 - C++
 - Haskell
 - OCaml

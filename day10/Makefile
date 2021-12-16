@@ -1,10 +1,7 @@
 include ../common.mk
-OBJS += build/main.exe
 
-build/main.exe: main.fs
-	mkdir -p build
+build/%.exe: common.fs %.fs | build
 	fsc --standalone -o $@ $^
 
-$(BINS): build/%: build/main.exe run.sh
-	mkdir -p build
-	ln -sf ../run.sh $@
+$(BINS): build/%: build/%.exe
+	$(call wrap,$@,mono build/$*.exe)
