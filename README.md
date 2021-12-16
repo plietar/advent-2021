@@ -11,6 +11,7 @@
 - [Day 8: Seven Segment Search (JavaScript)](day08)
 - [Day 9: Smoke Basin (PHP)](day09)
 - [Day 10: Syntax Scoring (F#)](day10)
+- [Day 11: Dumbo Octopus (Coq)](day11)
 - [Day 13: Transparent Origami (Go)](day13)
 - [Day 14: Extended Polymerization (Pony)](day14)
 
@@ -21,7 +22,6 @@ This is a tentative list of languages that haven't been used yet, subject to cha
 - Java
 - C++
 - Haskell
-- Coq
 - OCaml
 - Idris
 - Ruby
@@ -60,11 +60,10 @@ not officially supported on macOS.
 
 ### Coq
 
-Out of the box, Coq does not provide a way to perform the necessary I/O used to
-load the input and produce the data. In fact, there is no such thing as a Coq
-executable. [Coq-io](https://github.com/coq-io/io) will be used to extract the
-Coq definitions to OCaml and expose I/O primitives, allowing an executable to
-be produced.
+Coq does not provide a way to perform the necessary I/O used to load the input
+and produce the data. In fact, there is no such thing as a Coq executable.
 
-As an extended goal, the solution should include a proof of correctness.
+Instead, the Coq definitions should be extracted into OCaml, and a thin layer
+of OCaml code is used to provide the necessary I/O.
 
+As an extended goal, the solution should include a proof of termination and correctness.

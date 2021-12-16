@@ -5,7 +5,7 @@ INPUT:=example.txt
 
 all: $(BINS)
 clean:
-	rm -f $(BINS) $(OBJS)
+	rm -f $(BINS) $(OBJS) build/*
 
 $(RUNS): run-%: build/%
 	./$< < $(INPUT)
