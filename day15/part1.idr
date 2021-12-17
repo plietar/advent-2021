@@ -36,10 +36,10 @@ asVect n l with (decEq n (length l))
 resize : (n: Nat) -> List a -> Either ParseError (Vect n a)
 resize n l = maybeToEither BadShape (asVect n l)
 
-readRisk : Char -> Either ParseError Int
+readRisk : Char -> Either ParseError Integer
 readRisk c =
   let n = ord c in
-  if n >= ord '0' && ord c <= ord '9' then pure (n - ord '0')
+  if n >= ord '0' && ord c <= ord '9' then pure (cast (n - ord '0'))
                                       else throwError (BadRisk c)
 
 data Grid : Nat -> Nat -> Type -> Type where
@@ -57,16 +57,7 @@ Foldable (Grid n m) where
 Traversable (Grid n m) where
   traverse f (MkGrid g) = MkGrid <$> traverse (traverse f) g
 
-readGrid : EitherT ParseError IO (n ** m ** Grid n m Int)
-readGrid = do
-  firstLine <- getLine <&> unpack
-  rest <- unfoldM (tryGetLine <&> map unpack) >>=
-    liftEither . traverse (resize (length firstLine))
-
-  result <- traverse (liftEither . readRisk) (fromVect (fromList ((fromList firstLine) :: rest)))
-  pure (_ ** _ ** result)
-
-parseGrid : List String -> Either ParseError (n ** m ** Grid n (S m) Int)
+parseGrid : List String -> Either ParseError (n ** m ** Grid n (S m) Integer)
 parseGrid Nil = throwError EmptyInput
 parseGrid (l::ls) = do
   let firstLine = fromList (unpack l)
@@ -78,7 +69,7 @@ bump : (n: Nat) -> Either ParseError (m ** S m = n)
 bump Z = Left EmptyInput
 bump (S k) = Right (k ** Refl)
 
-parseGrid' : List String -> Either ParseError (n ** m ** Grid (S n) (S m) Int)
+parseGrid' : List String -> Either ParseError (n ** m ** Grid (S n) (S m) Integer)
 parseGrid' ls =
   case parseGrid ls of
    Left e => Left e
@@ -89,6 +80,42 @@ parseGrid' ls =
 
 data V2 : Nat -> Nat -> Type where
   MkV2 : Fin n -> Fin m -> V2 n m
+
+data V2' : Nat -> Nat -> Nat -> Nat -> Type where
+  MkV2' : Fin s -> Fin t -> Fin n -> Fin m -> V2' s t n m
+
+wrap : Integer -> Integer
+wrap n = mod (n - 1) 9 + 1
+
+gridAt' : Grid n m Integer -> V2' s t n m -> Integer
+gridAt' (MkGrid g) (MkV2' u v x y) = wrap ((index x (index y g)) + (finToInteger u + finToInteger v))
+
+zero : Fin n -> Fin n
+zero FZ = FZ
+zero (FS n') = FZ
+
+neighbours' : {s: Nat} -> {t: Nat} -> {n: Nat} -> {m: Nat} -> V2' s t n m -> List (V2' s t n m)
+neighbours' (MkV2' u v x y) = catMaybes [moveX prev, moveX next, moveY prev, moveY next]
+  where
+    prev : {k: Nat} -> Fin j -> Fin k -> Maybe (Fin j, Fin k)
+    prev FZ FZ = Nothing
+    prev (FS u) FZ = Just (weaken u, last)
+    prev u (FS a) = Just (u, weaken a)
+
+    next : {j: Nat} -> {k: Nat} -> Fin j -> Fin k -> Maybe (Fin j, Fin k)
+    next a b with (strengthen (FS a), strengthen (FS b))
+      next a b | (_, Just b') = Just (a, b')
+      next a b | (Just a', Nothing) = Just (a', zero b)
+      next a b | (Nothing, Nothing) = Nothing
+
+    moveX : ({j: Nat} -> {k: Nat} -> Fin j -> Fin k -> Maybe (Fin j, Fin k)) -> Maybe (V2' s t n m)
+    moveX f = (\(u', x') => MkV2' u' v x' y) <$> f u x
+
+    moveY : ({j: Nat} -> {k: Nat} -> Fin j -> Fin k -> Maybe (Fin j, Fin k)) -> Maybe (V2' s t n m)
+    moveY f = (\(v', y') => MkV2' u v' x y') <$> f v y
+
+    -- moveY : ({j: Nat} -> {k: Nat} -> Fin k -> Maybe (Fin k)) -> Maybe (V2 n m)
+    -- moveY f = MkV2' x <$> f y
 
 gridAt : Grid n m a -> V2 n m ->  a
 gridAt (MkGrid g) (MkV2 x y) = index x (index y g)
@@ -109,7 +136,7 @@ neighbours (MkV2 x y) = catMaybes [moveX prev, moveX next, moveY prev, moveY nex
     moveY : ({k: Nat} -> Fin k -> Maybe (Fin k)) -> Maybe (V2 n m)
     moveY f = MkV2 x <$> f y
 
-data Distance = Finite Int | Infinite
+data Distance = Finite Integer | Infinite
 
 Show (V2 n m) where
   show (MkV2 x y) = show (x, y)
@@ -119,6 +146,12 @@ Eq (V2 n m) where
 
 Ord (V2 n m) where
   compare (MkV2 x1 y1) (MkV2 x2 y2) = compare (x1, y1) (x2, y2)
+
+Eq (V2' s t n m) where
+  (MkV2' u1 v1 x1 y1) == (MkV2' u2 v2 x2 y2) = (u1, v1, x1, y1) == (u2, v2, x2, y2)
+
+Ord (V2' s t n m) where
+  compare (MkV2' u1 v1 x1 y1) (MkV2' u2 v2 x2 y2) = compare (u1, v1, x1, y1) (u2, v2, x2, y2)
 
 minWith : Ord b => (a -> b) -> a -> a -> a
 minWith f x y = if f x < f y then x else y
@@ -135,27 +168,28 @@ loop f x = case f x of
                 Left x' => loop f x'
                 Right y => y
 
-loop' : (a -> Either a a) -> a -> a
-loop' f x = case f x of
-                Left x' => x'
-                Right y => y
+manhattan : V2 n m -> V2 n m -> Integer
+manhattan (MkV2 x1 y1) (MkV2 x2 y2) =
+  let dx = (finToInteger x1) - (finToInteger x2) in
+  let dy = (finToInteger y1) - (finToInteger y2) in
+  abs dx + abs dy
 
-dijkstra : Ord p => (p -> List (p, Int)) -> p -> p -> (SortedSet p, SortedMap p Int)
+dijkstra : Ord p => (p -> List (p, Integer)) -> p -> p -> (SortedSet p, SortedMap p Integer)
 dijkstra neighbours initial final = loop (uncurry step) (empty, singleton initial 0)
   where
-    visit : SortedSet p -> SortedMap p Int -> Int -> p -> (SortedSet p, SortedMap p Int)
+    visit : SortedSet p -> SortedMap p Integer -> Integer -> p -> (SortedSet p, SortedMap p Integer)
     visit visited distances d node = (insert node visited, combinedDistances)
       where
         notVisited : p -> Bool
         notVisited node' = not (contains node' visited)
 
-        newDistances : SortedMap p Int
+        newDistances : SortedMap p Integer
         newDistances = fromList (mapSnd (d+) <$> filter (notVisited . fst) (neighbours node))
 
-        combinedDistances : SortedMap p Int
+        combinedDistances : SortedMap p Integer
         combinedDistances = mergeWith min distances newDistances
 
-    step : SortedSet p -> SortedMap p Int -> Either (SortedSet p, SortedMap p Int) (SortedSet p, SortedMap p Int)
+    step : SortedSet p -> SortedMap p Integer -> Either (SortedSet p, SortedMap p Integer) (SortedSet p, SortedMap p Integer)
     step visited distances =
         case nextNode of
              Just (node, d) => if node == final then Right (visit visited distances d node) else Left (visit visited distances d node)
@@ -164,21 +198,28 @@ dijkstra neighbours initial final = loop (uncurry step) (empty, singleton initia
         notVisited : p -> Bool
         notVisited node = not (contains node visited)
 
-        nextNode : Maybe (p, Int)
+        nextNode : Maybe (p, Integer)
         nextNode = minimumWith snd (filter (notVisited . fst) (toList (distances)))
 
-solve : {n: Nat} -> {m: Nat} -> Grid (S n) (S m) Int -> (SortedSet (V2 (S n) (S m)), (SortedMap (V2 (S n) (S m)) Int))
+solve : {n: Nat} -> {m: Nat} -> Grid (S n) (S m) Integer -> (SortedSet (V2 (S n) (S m)), (SortedMap (V2 (S n) (S m)) Integer))
 solve g = dijkstra cost (MkV2 0 0) (MkV2 last last)
   where
-    cost : V2 (S n) (S m) -> List (V2 (S n) (S m), Int)
+    cost : V2 (S n) (S m) -> List (V2 (S n) (S m), Integer)
     cost p = map (\p' => (p', gridAt g p')) (neighbours p)
 
-solve' : {n: Nat} -> {m: Nat} -> Grid (S n) (S m) Int -> Maybe Int
+solve' : {n: Nat} -> {m: Nat} -> Grid (S n) (S m) Integer -> Maybe Integer
 solve' g = let (_, distances) = solve g in lookup (MkV2 last last) distances
+
+solve2 : {n: Nat} -> {m: Nat} -> Grid (S n) (S m) Integer -> Maybe Integer
+solve2 g = let (_, distances) = dijkstra cost (MkV2' 0 0 0 0) (MkV2' last last last last) in
+               lookup (MkV2' last last last last) distances
+  where
+    cost : V2' 5 5 (S n) (S m) -> List (V2' 5 5 (S n) (S m), Integer)
+    cost p = map (\p' => (p', gridAt' g p')) (neighbours' p)
  
 main : IO ()
 main = do
   lines <- unfoldM tryGetLine
-  let result = parseGrid' lines <&> \(_ ** _ ** g) => solve' g
+  let result = parseGrid' lines <&> \(_ ** _ ** g) => solve2 g
   printLn result
   pure ()
