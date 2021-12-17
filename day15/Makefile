@@ -1,4 +1,4 @@
 include ../common.mk
 
 $(BINS): build/%: %.idr | build
-	idris2 $< -o hello 
+	idris2 --profile $< -o hello 
