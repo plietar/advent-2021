@@ -78,24 +78,21 @@ parseGrid' ls =
       Left e => Left e
       Right (w' ** p) => Right (w' ** h ** rewrite p in g)
 
-data V2 : Nat -> Nat -> Type where
-  MkV2 : Fin n -> Fin m -> V2 n m
-
-data V2' : Nat -> Nat -> Nat -> Nat -> Type where
-  MkV2' : Fin s -> Fin t -> Fin n -> Fin m -> V2' s t n m
+data V2 : Nat -> Nat -> Nat -> Nat -> Type where
+  MkV2 : Fin s -> Fin t -> Fin n -> Fin m -> V2 s t n m
 
 wrap : Integer -> Integer
 wrap n = mod (n - 1) 9 + 1
 
-gridAt' : Grid n m Integer -> V2' s t n m -> Integer
-gridAt' (MkGrid g) (MkV2' u v x y) = wrap ((index x (index y g)) + (finToInteger u + finToInteger v))
+gridAt : Grid n m Integer -> V2 s t n m -> Integer
+gridAt (MkGrid g) (MkV2 u v x y) = wrap ((index x (index y g)) + (finToInteger u + finToInteger v))
 
 zero : Fin n -> Fin n
 zero FZ = FZ
 zero (FS n') = FZ
 
-neighbours' : {s: Nat} -> {t: Nat} -> {n: Nat} -> {m: Nat} -> V2' s t n m -> List (V2' s t n m)
-neighbours' (MkV2' u v x y) = catMaybes [moveX prev, moveX next, moveY prev, moveY next]
+neighbours : {s: Nat} -> {t: Nat} -> {n: Nat} -> {m: Nat} -> V2 s t n m -> List (V2 s t n m)
+neighbours (MkV2 u v x y) = catMaybes [moveX prev, moveX next, moveY prev, moveY next]
   where
     prev : {k: Nat} -> Fin j -> Fin k -> Maybe (Fin j, Fin k)
     prev FZ FZ = Nothing
@@ -108,50 +105,22 @@ neighbours' (MkV2' u v x y) = catMaybes [moveX prev, moveX next, moveY prev, mov
       next a b | (Just a', Nothing) = Just (a', zero b)
       next a b | (Nothing, Nothing) = Nothing
 
-    moveX : ({j: Nat} -> {k: Nat} -> Fin j -> Fin k -> Maybe (Fin j, Fin k)) -> Maybe (V2' s t n m)
-    moveX f = (\(u', x') => MkV2' u' v x' y) <$> f u x
+    moveX : ({j: Nat} -> {k: Nat} -> Fin j -> Fin k -> Maybe (Fin j, Fin k)) -> Maybe (V2 s t n m)
+    moveX f = (\(u', x') => MkV2 u' v x' y) <$> f u x
 
-    moveY : ({j: Nat} -> {k: Nat} -> Fin j -> Fin k -> Maybe (Fin j, Fin k)) -> Maybe (V2' s t n m)
-    moveY f = (\(v', y') => MkV2' u v' x y') <$> f v y
-
-    -- moveY : ({j: Nat} -> {k: Nat} -> Fin k -> Maybe (Fin k)) -> Maybe (V2 n m)
-    -- moveY f = MkV2' x <$> f y
-
-gridAt : Grid n m a -> V2 n m ->  a
-gridAt (MkGrid g) (MkV2 x y) = index x (index y g)
-
-neighbours : {n: Nat} -> {m: Nat} -> V2 n m -> List (V2 n m)
-neighbours (MkV2 x y) = catMaybes [moveX prev, moveX next, moveY prev, moveY next]
-  where
-    prev : Fin k -> Maybe (Fin k)
-    prev FZ = Nothing
-    prev (FS a) = Just (weaken a)
-
-    next : {k: Nat} -> Fin k -> Maybe (Fin k)
-    next = strengthen . FS
-
-    moveX : ({k: Nat} -> Fin k -> Maybe (Fin k)) -> Maybe (V2 n m)
-    moveX f = (\x' => MkV2 x' y) <$> f x
-
-    moveY : ({k: Nat} -> Fin k -> Maybe (Fin k)) -> Maybe (V2 n m)
-    moveY f = MkV2 x <$> f y
+    moveY : ({j: Nat} -> {k: Nat} -> Fin j -> Fin k -> Maybe (Fin j, Fin k)) -> Maybe (V2 s t n m)
+    moveY f = (\(v', y') => MkV2 u v' x y') <$> f v y
 
 data Distance = Finite Integer | Infinite
 
-Show (V2 n m) where
-  show (MkV2 x y) = show (x, y)
+Show (V2 s t n m) where
+  show (MkV2 u v x y) = show (u, v, x, y)
 
-Eq (V2 n m) where
-  (MkV2 x1 y1) == (MkV2 x2 y2) = (x1, y1) == (x2, y2)
+Eq (V2 s t n m) where
+  (MkV2 u1 v1 x1 y1) == (MkV2 u2 v2 x2 y2) = (u1, v1, x1, y1) == (u2, v2, x2, y2)
 
-Ord (V2 n m) where
-  compare (MkV2 x1 y1) (MkV2 x2 y2) = compare (x1, y1) (x2, y2)
-
-Eq (V2' s t n m) where
-  (MkV2' u1 v1 x1 y1) == (MkV2' u2 v2 x2 y2) = (u1, v1, x1, y1) == (u2, v2, x2, y2)
-
-Ord (V2' s t n m) where
-  compare (MkV2' u1 v1 x1 y1) (MkV2' u2 v2 x2 y2) = compare (u1, v1, x1, y1) (u2, v2, x2, y2)
+Ord (V2 s t n m) where
+  compare (MkV2 u1 v1 x1 y1) (MkV2 u2 v2 x2 y2) = compare (u1, v1, x1, y1) (u2, v2, x2, y2)
 
 minWith : Ord b => (a -> b) -> a -> a -> a
 minWith f x y = if f x < f y then x else y
@@ -167,12 +136,6 @@ loop : (a -> Either a b) -> a -> b
 loop f x = case f x of
                 Left x' => loop f x'
                 Right y => y
-
-manhattan : V2 n m -> V2 n m -> Integer
-manhattan (MkV2 x1 y1) (MkV2 x2 y2) =
-  let dx = (finToInteger x1) - (finToInteger x2) in
-  let dy = (finToInteger y1) - (finToInteger y2) in
-  abs dx + abs dy
 
 dijkstra : Ord p => (p -> List (p, Integer)) -> p -> p -> (SortedSet p, SortedMap p Integer)
 dijkstra neighbours initial final = loop (uncurry step) (empty, singleton initial 0)
@@ -201,25 +164,18 @@ dijkstra neighbours initial final = loop (uncurry step) (empty, singleton initia
         nextNode : Maybe (p, Integer)
         nextNode = minimumWith snd (filter (notVisited . fst) (toList (distances)))
 
-solve : {n: Nat} -> {m: Nat} -> Grid (S n) (S m) Integer -> (SortedSet (V2 (S n) (S m)), (SortedMap (V2 (S n) (S m)) Integer))
-solve g = dijkstra cost (MkV2 0 0) (MkV2 last last)
+solve : {n: Nat} -> {m: Nat} -> (s: Nat) -> Grid (S n) (S m) Integer -> Maybe Integer
+solve s g =
+  let (start, end) = (MkV2 0 0 0 0, MkV2 last last last last) in
+  let (_, distances) = dijkstra cost start end in
+      SortedMap.lookup end distances
   where
-    cost : V2 (S n) (S m) -> List (V2 (S n) (S m), Integer)
+    cost : V2 (S s) (S s) (S n) (S m) -> List (V2 (S s) (S s) (S n) (S m), Integer)
     cost p = map (\p' => (p', gridAt g p')) (neighbours p)
-
-solve' : {n: Nat} -> {m: Nat} -> Grid (S n) (S m) Integer -> Maybe Integer
-solve' g = let (_, distances) = solve g in lookup (MkV2 last last) distances
-
-solve2 : {n: Nat} -> {m: Nat} -> Grid (S n) (S m) Integer -> Maybe Integer
-solve2 g = let (_, distances) = dijkstra cost (MkV2' 0 0 0 0) (MkV2' last last last last) in
-               lookup (MkV2' last last last last) distances
-  where
-    cost : V2' 5 5 (S n) (S m) -> List (V2' 5 5 (S n) (S m), Integer)
-    cost p = map (\p' => (p', gridAt' g p')) (neighbours' p)
  
 main : IO ()
 main = do
   lines <- unfoldM tryGetLine
-  let result = parseGrid' lines <&> \(_ ** _ ** g) => solve2 g
+  let result = parseGrid' lines <&> \(_ ** _ ** g) => solve 4 g
   printLn result
   pure ()
